@@ -12,6 +12,7 @@
 // Settings
 var summaryShortSkillNames = true; // Turn off if you want full skill names on summary header
 var ldLNOnTop = true; // Turn off if you don't want LD/LN to be first clans listed
+var highlightSkills = ['Agility']; // Highlight listed skills in player list
 // Settings end
 
 var profileURL = 'https://www.gatesofsurvival.com/game/user2.php?user=';
@@ -376,7 +377,7 @@ function getPlayerTable(clan) {
 
         var player;
         var playerAnchor;
-
+        var playerSkill;
         for (var i = 0; i < numPlayers; i++) {
             player = players[i];
 
@@ -390,18 +391,22 @@ function getPlayerTable(clan) {
             nameCell.appendChild(playerAnchor);
 
             idCell = row.insertCell();
-            idCell.classList.add('numberCell');
+            idCell.classList.add('number-cell');
             idCell.appendChild(document.createTextNode(player.id || ''));
 
             lastActiveCell = row.insertCell();
             lastActiveCell.appendChild(document.createTextNode(player.lastActive || ''));
 
             rankCell = row.insertCell();
-            rankCell.classList.add('numberCell');
+            rankCell.classList.add('number-cell');
             rankCell.appendChild(document.createTextNode(player.rank || ''));
 
+            playerSkill = player.skill;
             skillCell = row.insertCell();
-            skillCell.appendChild(document.createTextNode(player.skill || ''));
+            skillCell.appendChild(document.createTextNode(playerSkill || ''));
+            if (highlightSkills.indexOf(playerSkill) > -1) {
+                skillCell.classList.add('highlight-skill');
+            }
 
             mobCell = row.insertCell();
             mobCell.appendChild(document.createTextNode(player.mob || ''));
@@ -465,16 +470,16 @@ function getSummary() {
     var totalPlayers = ld.players.length + ln.players.length;
     for (i = 0; i < numSkills; i++) {
         skillCell = row.insertCell();
-        skillCell.classList.add('numberCell');
+        skillCell.classList.add('number-cell');
         skillCell.appendChild(document.createTextNode(formatPercentage((ld.skills[i].count + ln.skills[i].count)/totalPlayers)));
     }
 
     // Empty total and total % cells for Lucky %
     clanTotalCell = row.insertCell();
-    clanTotalCell.classList.add('numberCell');
+    clanTotalCell.classList.add('number-cell');
 
     clanTotalPercCell = row.insertCell();
-    clanTotalPercCell.classList.add('numberCell');
+    clanTotalPercCell.classList.add('number-cell');
 
     var clan;
     totalPlayers = totals.players.length;
@@ -491,18 +496,18 @@ function getSummary() {
         // Clan skill numbers
         for (j = 0; j < numSkills; j++) {
             skillCell = row.insertCell();
-            skillCell.classList.add('numberCell');
+            skillCell.classList.add('number-cell');
             skillCell.appendChild(document.createTextNode(clan.skills[j].count));
         }
 
         // Clan total count
         clanTotalCell = row.insertCell();
-        clanTotalCell.classList.add('numberCell');
+        clanTotalCell.classList.add('number-cell');
         clanTotalCell.appendChild(document.createTextNode(clan.players.length));
 
         // Clan total %
         clanTotalPercCell = row.insertCell();
-        clanTotalPercCell.classList.add('numberCell');
+        clanTotalPercCell.classList.add('number-cell');
         clanTotalPercCell.appendChild(document.createTextNode(formatPercentage(clan.players.length/totalPlayers)));
     }
 
@@ -516,24 +521,27 @@ function getSummary() {
     // % skill numbers
     for (j = 0; j < numSkills; j++) {
         skillCell = row.insertCell();
-        skillCell.classList.add('numberCell');
+        skillCell.classList.add('number-cell');
         skillCell.appendChild(document.createTextNode(formatPercentage(totals.skills[j].count/totalPlayers)));
     }
 
     // Empty total and total % cells for Lucky %
     clanTotalCell = row.insertCell();
-    clanTotalCell.classList.add('numberCell');
+    clanTotalCell.classList.add('number-cell');
 
     clanTotalPercCell = row.insertCell();
-    clanTotalPercCell.classList.add('numberCell');
+    clanTotalPercCell.classList.add('number-cell');
 
     return div;
 }
 
 function addReportStyles(doc) {
-    var css = '.numberCell {\n' +
-        '   text-align: right;\n' +
-        '   padding-right: 3px;\n' +
+    var css = '.highlight-skill {\n' +
+        '    font-style: italic;\n' +
+        '}\n\n' +
+        '.number-cell {\n' +
+        '    text-align: right;\n' +
+        '    padding-right: 3px;\n' +
         '}';
     addGlobalStyle(css, doc.head);
 }
