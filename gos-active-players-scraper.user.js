@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Gates of Survival - Active Players scraper
 // @namespace   https://www.gatesofsurvival.com
-// @version     0.1
+// @version     0.2
 // @author      dang
 // @description Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
 // @match       https://www.gatesofsurvival.com/game/online.php
@@ -9,6 +9,12 @@
 // @updateURL   https://raw.github.com/dang-nabbit/gos-active-players-scraper/master/gos-active-players-scraper.user.js
 // @grant       none
 // ==/UserScript==
+
+// Settings
+var summaryShortSkillNames = true; // Turn off if you want full skill names on summary header
+// Settings end
+
+var profileURL = 'https://www.gatesofsurvival.com/game/user2.php?user=';
 
 var errors = [];
 var clans = [];
@@ -30,37 +36,100 @@ var playerTypes = [
 var numPlayerTypes = playerTypes.length;
 
 var skills = [
-    'Agility',
-    'Arcane',
-    'Archery',
-    'Baking',
-    'Botany',
-    'Cooking',
-    'Crafting',
-    'Divination',
-    'Exploration',
-    'Fighting',
-    'Firemaking',
-    'Fishing',
-    'Fletching',
-    'Forestry',
-    'Forging',
-    'Gathering',
-    'Hunting',
-    'Jewelcrafting',
-    'Looting',
-    'Mining',
-    'Prayer',
-    'Runebinding',
-    'Skinning',
-    'Slaying',
-    'Smelting',
-    'Spellcraft',
-    'Summoning',
-    'Thieving',
-    'Transmutation',
-    'Woodworking',
-    'Not skilling'
+    {
+        name: 'Agility',
+        short: 'Agi'
+    }, {
+        name: 'Arcane',
+        short: 'Acn'
+    }, {
+        name: 'Archery',
+        short: 'Ach'
+    }, {
+        name: 'Baking',
+        short: 'Bak'
+    }, {
+        name: 'Botany',
+        short: 'Bot'
+    }, {
+        name: 'Cooking',
+        short: 'Coo'
+    }, {
+        name: 'Crafting',
+        short: 'Cra'
+    }, {
+        name: 'Divination',
+        short: 'Div'
+    }, {
+        name: 'Exploration',
+        short: 'Exp'
+    }, {
+        name: 'Fighting',
+        short: 'Cbt'
+    }, {
+        name: 'Firemaking',
+        short: 'Fir'
+    }, {
+        name: 'Fishing',
+        short: 'Fis'
+    }, {
+        name: 'Fletching',
+        short: 'Fle'
+    }, {
+        name: 'Forestry',
+        short: 'Frt'
+    }, {
+        name: 'Forging',
+        short: 'Frg'
+    }, {
+        name: 'Gathering',
+        short: 'Gat'
+    }, {
+        name: 'Hunting',
+        short: 'Hun'
+    }, {
+        name: 'Jewelcrafting',
+        short: 'Jwc'
+    }, {
+        name: 'Looting',
+        short: 'Loo'
+    }, {
+        name: 'Mining',
+        short: 'Min'
+    }, {
+        name: 'Prayer',
+        short: 'Pra'
+    }, {
+        name: 'Runebinding',
+        short: 'Run'
+    }, {
+        name: 'Skinning',
+        short: 'Ski'
+    }, {
+        name: 'Slaying',
+        short: 'Sla'
+    }, {
+        name: 'Smelting',
+        short: 'Sme'
+    }, {
+        name: 'Spellcraft',
+        short: 'Spe'
+    }, {
+        name: 'Summoning',
+        short: 'Sum'
+    }, {
+        name: 'Thieving',
+        short: 'Thi'
+    }, {
+        name: 'Transmutation',
+        short: 'Tra'
+    }, {
+        name: 'Woodworking',
+        short: 'Woo'
+    }, {
+        name: 'Not skilling',
+        short: 'Not'
+    }
 ];
 var numSkills = skills.length;
 
@@ -71,7 +140,7 @@ function addClanSkillCount(clan) {
         skill = skills[i];
 
         clan.skills.push({
-            name: skill,
+            name: skill.name,
             count: 0
         });
     }
@@ -120,11 +189,11 @@ function scrapePlayer(tdInnerHTML) {
             activity = activityResult[1];
 
             for (i = 0; i < numSkills; i++) {
-                skill = skills[i];
-                if (activity.indexOf(skill) > -1) {
-                    player.skill = skill;
+                skillName = skills[i].name;
+                if (activity.indexOf(skillName) > -1) {
+                    player.skill = skillName;
 
-                    if (skill === 'Fighting') {
+                    if (skillName === 'Fighting') {
                         player.mob = activity.replace('Fighting a ', '');
                     }
 
@@ -267,6 +336,7 @@ function getPlayerTable(players) {
         activityCell.outerHTML = '<th>Activity</th>';
         
         var player;
+        var playerAnchor;
 
         for (var i = 0; i < numPlayers; i++) {
             player = players[i];
@@ -274,7 +344,11 @@ function getPlayerTable(players) {
             row = table.insertRow();
             
             nameCell = row.insertCell();
-            nameCell.appendChild(document.createTextNode(player.name || ''));
+            playerAnchor = document.createElement('a');
+            playerAnchor.href = profileURL + (player.name || '');
+            playerAnchor.target = '_blank';
+            playerAnchor.appendChild(document.createTextNode(player.name || ''));
+            nameCell.appendChild(playerAnchor);
 
             idCell = row.insertCell();
             idCell.appendChild(document.createTextNode(player.id || ''));
@@ -327,9 +401,10 @@ function getSummary() {
     clanCell.outerHTML = '<th>Clan</th>';
     
     var skillCell;
+    var skillHeader = (summaryShortSkillNames) ? 'short' : 'name'
     for (i = 0; i < numSkills; i++) {
         skillCell = row.insertCell();
-        skillCell.outerHTML = '<th>' + skills[i] + '</th>';
+        skillCell.outerHTML = '<th>' + skills[i][skillHeader] + '</th>';
     }
     
     var clanTotalCell = row.insertCell();
