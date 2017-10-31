@@ -1,12 +1,13 @@
 // ==UserScript==
-// @name         Gates of Survival - Active Players scraper
-// @namespace    https://www.gatesofsurvival.com
-// @version      0.1
-// @author       dang
-// @description  Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
-// @downloadURL  
-// @match        https://www.gatesofsurvival.com/game/online.php
-// @grant        none
+// @name        Gates of Survival - Active Players scraper
+// @namespace   https://www.gatesofsurvival.com
+// @version     0.1
+// @author      dang
+// @description Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
+// @match       https://www.gatesofsurvival.com/game/online.php
+// @icon        https://www.google.com/s2/favicons?domain=https://www.gatesofsurvival.com/
+// @updateURL   https://raw.github.com/dang-nabbit/gos-active-players-scraper/master/gos-active-players-scraper.user.js
+// @grant       none
 // ==/UserScript==
 
 var errors = [];
