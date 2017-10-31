@@ -540,8 +540,8 @@ function addReportStyles(doc) {
 
 function printDataTables() {
     addClanSkillCount(noClan);
-    addClanSkillCount(hardcore);
     addClanSkillCount(ironman);
+    addClanSkillCount(hardcore);
     addClanSkillCount(totals);
     scrapeAll();
 
@@ -550,14 +550,15 @@ function printDataTables() {
 
     var reportBody = reportDoc.body;
     reportBody.appendChild(getErrorsTable());
-    reportBody.appendChild(getPlayerTable(noClan));
-    reportBody.appendChild(getPlayerTable(ironman));
-    reportBody.appendChild(getPlayerTable(hardcore));
 
     var numClans = clans.length;
     for (var i = 0; i < numClans; i++) {
         reportBody.appendChild(getPlayerTable(clans[i]));
     }
+
+    reportBody.appendChild(getPlayerTable(noClan));
+    reportBody.appendChild(getPlayerTable(ironman));
+    reportBody.appendChild(getPlayerTable(hardcore));
 
     reportBody.appendChild(getSummary());
 }
