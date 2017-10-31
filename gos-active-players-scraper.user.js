@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Gates of Survival - Active Players scraper
 // @namespace   https://www.gatesofsurvival.com
-// @version     0.7
+// @version     0.8
 // @author      dang
 // @description Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
 // @match       https://www.gatesofsurvival.com/game/online.php
@@ -12,7 +12,8 @@
 // Settings
 var summaryShortSkillNames = true; // Turn off if you want full skill names on summary header
 var ldLNOnTop = true; // Turn off if you don't want LD/LN to be first clans listed
-var highlightSkills = ['Agility']; // Highlight listed skills in player list
+var italicSkills = ['Agility']; // Make listed skills italic in player list
+var boldSkills = ['Not skilling']; // Make listed skills bold in player list
 // Settings end
 
 var profileURL = 'https://www.gatesofsurvival.com/game/user2.php?user=';
@@ -404,8 +405,11 @@ function getPlayerTable(clan) {
             playerSkill = player.skill;
             skillCell = row.insertCell();
             skillCell.appendChild(document.createTextNode(playerSkill || ''));
-            if (highlightSkills.indexOf(playerSkill) > -1) {
-                skillCell.classList.add('highlight-skill');
+            if (italicSkills.indexOf(playerSkill) > -1) {
+                skillCell.classList.add('italic');
+            }
+            if (boldSkills.indexOf(playerSkill) > -1) {
+                skillCell.classList.add('bold');
             }
 
             mobCell = row.insertCell();
@@ -536,8 +540,11 @@ function getSummary() {
 }
 
 function addReportStyles(doc) {
-    var css = '.highlight-skill {\n' +
+    var css = '.italic {\n' +
         '    font-style: italic;\n' +
+        '}\n\n' +
+        '.bold {\n' +
+        '    font-weight: bold;\n' +
         '}\n\n' +
         '.number-cell {\n' +
         '    text-align: right;\n' +
