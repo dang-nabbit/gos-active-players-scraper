@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Gates of Survival - Active Players scraper
 // @namespace   https://www.gatesofsurvival.com
-// @version     0.2
+// @version     0.3
 // @author      dang
 // @description Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
 // @match       https://www.gatesofsurvival.com/game/online.php
