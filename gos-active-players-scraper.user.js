@@ -38,6 +38,8 @@ var totals = {
     players: [],
     skills: []
 };
+var ld;
+var ln;
 
 var playerTypes = [
     'Hardcore Ironman',
@@ -152,6 +154,10 @@ function addGlobalStyle(css, head) {
     head.appendChild(style);
 }
 
+function formatPercentage(number) {
+    return (number * 100).toFixed(1) + '%';
+}
+
 function addClanSkillCount(clan) {
     var skill;
 
@@ -264,8 +270,16 @@ function addPlayerToList(td) {
 
             addClanSkillCount(clan);
 
-            if (ldLNOnTop && ['LD', 'LN'].indexOf(playerClan) > -1) {
-                clans.splice(0, 0, clan);
+            if (['LD', 'LN'].indexOf(playerClan) > -1) {
+                if (playerClan === 'LD') {
+                    ld = clan;
+                } else if (playerClan === 'LN') {
+                    ln = clan;
+                }
+
+                if (ldLNOnTop) {
+                    clans.splice(0, 0, clan);
+                }
             } else {
                 clans.push(clan);
             }
@@ -280,8 +294,11 @@ function addPlayerToList(td) {
 
     skillObj = clan.skills.find(function(skill) {return skill.name === player.skill;});
     skillObj.count++;
+    skillObj = totals.skills.find(function(skill) {return skill.name === player.skill;});
+    skillObj.count++;
 
     clan.players.push(player);
+    totals.players.push(player);
 }
 
 function scrapeAll() {
@@ -398,6 +415,7 @@ function getPlayerTable(clan) {
 }
 
 function getSummary() {
+    // In summary, show clans and add other categories at end
     var summaryClans = clans.concat([noClan, ironman, hardcore, totals]);
     var numSummaryClans = summaryClans.length;
     var i;
@@ -405,6 +423,7 @@ function getSummary() {
 
     var div = document.createElement('div');
 
+    // Title
     var title = document.createElement('b');
     title.appendChild(document.createTextNode('Summary'));
     div.appendChild(title);
@@ -412,13 +431,14 @@ function getSummary() {
     var table = document.createElement('table');
     div.appendChild(table);
 
-    div.appendChild(document.createElement('hr'));
-
+    // Header row
     var row = table.insertRow();
 
+    // Clan name header
     var clanCell = row.insertCell();
     clanCell.outerHTML = '<th>Clan</th>';
 
+    // Skill headers
     var skillCell;
     var skillHeader = (summaryShortSkillNames) ? 'short' : 'name'
     for (i = 0; i < numSkills; i++) {
@@ -426,38 +446,86 @@ function getSummary() {
         skillCell.outerHTML = '<th>' + skills[i][skillHeader] + '</th>';
     }
 
+    // Total column header
     var clanTotalCell = row.insertCell();
     clanTotalCell.outerHTML = '<th>Total</th>';
 
+    // Total % column header
+    var clanTotalPercCell = row.insertCell();
+    clanTotalPercCell.outerHTML = '<th>%</th>';
+
+    // Lucky % row
+    row = table.insertRow();
+
+    // Lucky % "clan name"
+    clanCell = row.insertCell();
+    clanCell.appendChild(document.createTextNode('L%'));
+
+    // Lucky % skill numbers
+    var totalPlayers = ld.players.length + ln.players.length;
+    for (i = 0; i < numSkills; i++) {
+        skillCell = row.insertCell();
+        skillCell.classList.add('numberCell');
+        skillCell.appendChild(document.createTextNode(formatPercentage((ld.skills[i].count + ln.skills[i].count)/totalPlayers)));
+    }
+
+    // Empty total and total % cells for Lucky %
+    clanTotalCell = row.insertCell();
+    clanTotalCell.classList.add('numberCell');
+
+    clanTotalPercCell = row.insertCell();
+    clanTotalPercCell.classList.add('numberCell');
+
     var clan;
-    var skill;
-    var clanSkill;
-    var skillCount;
+    totalPlayers = totals.players.length;
     for (i = 0; i < numSummaryClans; i++) {
         clan = summaryClans[i];
 
+        // Clan row
         row = table.insertRow();
 
+        // Clan name cell
         clanCell = row.insertCell();
         clanCell.appendChild(document.createTextNode(clan.initials));
 
+        // Clan skill numbers
         for (j = 0; j < numSkills; j++) {
-            clanSkill = clan.skills[j];
-            skillCount = clanSkill.count;
-
             skillCell = row.insertCell();
             skillCell.classList.add('numberCell');
-            skillCell.appendChild(document.createTextNode(skillCount));
-
-            totals.skills[j].count += skillCount;
+            skillCell.appendChild(document.createTextNode(clan.skills[j].count));
         }
 
+        // Clan total count
         clanTotalCell = row.insertCell();
         clanTotalCell.classList.add('numberCell');
         clanTotalCell.appendChild(document.createTextNode(clan.players.length));
 
-        totals.players = totals.players.concat(clan.players);
+        // Clan total %
+        clanTotalPercCell = row.insertCell();
+        clanTotalPercCell.classList.add('numberCell');
+        clanTotalPercCell.appendChild(document.createTextNode(formatPercentage(clan.players.length/totalPlayers)));
     }
+
+    // % row
+    row = table.insertRow();
+
+    // % name cell
+    clanCell = row.insertCell();
+    clanCell.appendChild(document.createTextNode('%'));
+
+    // % skill numbers
+    for (j = 0; j < numSkills; j++) {
+        skillCell = row.insertCell();
+        skillCell.classList.add('numberCell');
+        skillCell.appendChild(document.createTextNode(formatPercentage(totals.skills[j].count/totalPlayers)));
+    }
+
+    // Empty total and total % cells for Lucky %
+    clanTotalCell = row.insertCell();
+    clanTotalCell.classList.add('numberCell');
+
+    clanTotalPercCell = row.insertCell();
+    clanTotalPercCell.classList.add('numberCell');
 
     return div;
 }
