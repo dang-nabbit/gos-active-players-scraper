@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Gates of Survival - Active Players scraper
 // @namespace   https://www.gatesofsurvival.com
-// @version     0.4
+// @version     0.5
 // @author      dang
 // @description Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
 // @match       https://www.gatesofsurvival.com/game/online.php
@@ -20,6 +20,16 @@ var errors = [];
 var clans = [];
 var noClan = {
     initials: 'None',
+    players: [],
+    skills: []
+};
+var hardcore = {
+    initials: 'HC',
+    players: [],
+    skills: []
+};
+var ironman = {
+    initials: 'IM',
     players: [],
     skills: []
 };
@@ -187,9 +197,9 @@ function scrapePlayer(tdInnerHTML) {
         if (crown.indexOf('crown_') > -1) {
             player.rank =  crown.replace('crown_', '');
         } else if (crown === 'sponsor') {
-            player.rank = crown;
+            player.rank = 'Sponsor';
         } else {
-            player.rank = 'Unrecognized';
+            player.rank = 'Unidentified';
         }
 
         activityResult = activityRegEx.exec(tdInnerHTML);
@@ -236,8 +246,8 @@ function scrapePlayer(tdInnerHTML) {
 function addPlayerToList(td) {
     var player = scrapePlayer(td.innerHTML);
     var playerClan = player.clan;
+    var playerType = player.type;
     var clan = {};
-    var clanIndex;
     var skill;
     var skillObj;
 
@@ -255,12 +265,15 @@ function addPlayerToList(td) {
             addClanSkillCount(clan);
 
             if (ldLNOnTop && ['LD', 'LN'].indexOf(playerClan) > -1) {
-                clanIndex = (playerClan === 'LD') ? 0 : 1;
-                clans.splice(clanIndex, 0, clan);
+                clans.splice(0, 0, clan);
             } else {
                 clans.push(clan);
             }
         }
+    } else if (playerType === 'Hardcore Ironman') {
+        clan = hardcore;
+    } else if (playerType === 'Ironman') {
+        clan = ironman;
     } else {
         clan = noClan;
     }
@@ -312,15 +325,14 @@ function getErrorsTable() {
     return div;
 }
 
-function getPlayerTable(players) {
+function getPlayerTable(clan) {
+    var players = clan.players;
     var numPlayers = players.length;
     var div = document.createElement('div');
 
     if (numPlayers > 0) {
-        var clan = players[0].clan;
-
         var title = document.createElement('b');
-        title.appendChild(document.createTextNode(clan || 'No clan'));
+        title.appendChild(document.createTextNode(clan.initials));
         div.appendChild(title);
 
         var table = document.createElement('table');
@@ -333,11 +345,6 @@ function getPlayerTable(players) {
         nameCell.outerHTML = '<th>Name</th>';
         var idCell = row.insertCell();
         idCell.outerHTML = '<th>ID</th>';
-
-        if (!clan) {
-            var typeCell = row.insertCell();
-            typeCell.outerHTML = '<th>Type</th>';
-        }
 
         var lastActiveCell = row.insertCell();
         lastActiveCell.outerHTML = '<th>Last active</th>';
@@ -369,11 +376,6 @@ function getPlayerTable(players) {
             idCell.classList.add('numberCell');
             idCell.appendChild(document.createTextNode(player.id || ''));
 
-            if (!clan) {
-                typeCell = row.insertCell();
-                typeCell.appendChild(document.createTextNode(player.type || ''));
-            }
-
             lastActiveCell = row.insertCell();
             lastActiveCell.appendChild(document.createTextNode(player.lastActive || ''));
 
@@ -396,7 +398,7 @@ function getPlayerTable(players) {
 }
 
 function getSummary() {
-    var summaryClans = clans.concat([noClan], [totals]);
+    var summaryClans = clans.concat([noClan, ironman, hardcore, totals]);
     var numSummaryClans = summaryClans.length;
     var i;
     var j;
@@ -470,6 +472,8 @@ function addReportStyles(doc) {
 
 function printDataTables() {
     addClanSkillCount(noClan);
+    addClanSkillCount(hardcore);
+    addClanSkillCount(ironman);
     addClanSkillCount(totals);
     scrapeAll();
 
@@ -479,10 +483,12 @@ function printDataTables() {
     var reportBody = reportDoc.body;
     reportBody.appendChild(getErrorsTable());
     reportBody.appendChild(getPlayerTable(noClan));
+    reportBody.appendChild(getPlayerTable(ironman));
+    reportBody.appendChild(getPlayerTable(hardcore));
 
     var numClans = clans.length;
     for (var i = 0; i < numClans; i++) {
-        reportBody.appendChild(getPlayerTable(clans[i].players));
+        reportBody.appendChild(getPlayerTable(clans[i]));
     }
 
     reportBody.appendChild(getSummary());
