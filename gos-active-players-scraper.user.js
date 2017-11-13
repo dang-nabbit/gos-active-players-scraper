@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        Gates of Survival - Active Players scraper
 // @namespace   https://www.gatesofsurvival.com
-// @version     0.8
+// @version     0.9
 // @author      dang
+// @homepage    https://github.com/dang-nabbit/gos-active-players-scraper
 // @description Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
 // @match       https://www.gatesofsurvival.com/game/online.php
 // @icon        https://www.google.com/s2/favicons?domain=https://www.gatesofsurvival.com/
@@ -14,6 +15,7 @@ var summaryShortSkillNames = true; // Turn off if you want full skill names on s
 var ldLNOnTop = true; // Turn off if you don't want LD/LN to be first clans listed
 var italicSkills = ['Agility']; // Make listed skills italic in player list
 var boldSkills = ['Not skilling']; // Make listed skills bold in player list
+var underlineSkills = ['Fishing']; // Make listed skills underlined in player list
 // Settings end
 
 var profileURL = 'https://www.gatesofsurvival.com/game/user2.php?user=';
@@ -411,6 +413,9 @@ function getPlayerTable(clan) {
             if (boldSkills.indexOf(playerSkill) > -1) {
                 skillCell.classList.add('bold');
             }
+            if (underlineSkills.indexOf(playerSkill) > -1) {
+                skillCell.classList.add('underline');
+            }
 
             mobCell = row.insertCell();
             mobCell.appendChild(document.createTextNode(player.mob || ''));
@@ -545,6 +550,9 @@ function addReportStyles(doc) {
         '}\n\n' +
         '.bold {\n' +
         '    font-weight: bold;\n' +
+        '}\n\n' +
+        '.underline {\n' +
+        '    text-decoration: underline;\n' +
         '}\n\n' +
         '.number-cell {\n' +
         '    text-align: right;\n' +
