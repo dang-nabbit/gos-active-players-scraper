@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Gates of Survival - Active Players scraper
 // @namespace   https://www.gatesofsurvival.com
-// @version     0.10
+// @version     0.11
 // @author      dang
 // @homepage    https://github.com/dang-nabbit/gos-active-players-scraper
 // @downloadURL https://github.com/dang-nabbit/gos-active-players-scraper/raw/master/gos-active-players-scraper.user.js
@@ -64,19 +64,19 @@ var skills = [
         short: 'Arch'
     }, {
         name: 'Baking',
-        short: 'Bkng'
+        short: 'Bakn'
     }, {
         name: 'Botany',
-        short: 'Btny'
+        short: 'Bota'
     }, {
         name: 'Cooking',
-        short: 'Ckng'
+        short: 'Cook'
     }, {
         name: 'Crafting',
         short: 'Crft'
     }, {
         name: 'Divination',
-        short: 'Dvnt'
+        short: 'Divn'
     }, {
         name: 'Exploration',
         short: 'Expl'
@@ -91,7 +91,7 @@ var skills = [
         short: 'Fish'
     }, {
         name: 'Fletching',
-        short: 'Fltc'
+        short: 'Flet'
     }, {
         name: 'Forestry',
         short: 'Frst'
@@ -106,16 +106,16 @@ var skills = [
         short: 'Hunt'
     }, {
         name: 'Jewelcrafting',
-        short: 'Jwlc'
+        short: 'Jwel'
     }, {
         name: 'Looting',
         short: 'Loot'
     }, {
         name: 'Mining',
-        short: 'Mnng'
+        short: 'Mini'
     }, {
         name: 'Prayer',
-        short: 'Pryr'
+        short: 'Pray'
     }, {
         name: 'Runebinding',
         short: 'Rnbd'
