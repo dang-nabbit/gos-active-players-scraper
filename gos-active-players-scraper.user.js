@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name        Gates of Survival - Active Players scraper
 // @namespace   https://www.gatesofsurvival.com
-// @version     0.9
+// @version     0.10
 // @author      dang
 // @homepage    https://github.com/dang-nabbit/gos-active-players-scraper
+// @downloadURL https://github.com/dang-nabbit/gos-active-players-scraper/raw/master/gos-active-players-scraper.user.js
 // @description Shows active player data in table format. Based on Opal's Action Scraper: https://greasyfork.org/en/scripts/31091-action-scraper
 // @match       https://www.gatesofsurvival.com/game/online.php
 // @icon        https://www.google.com/s2/favicons?domain=https://www.gatesofsurvival.com/
@@ -54,97 +55,97 @@ var numPlayerTypes = playerTypes.length;
 var skills = [
     {
         name: 'Agility',
-        short: 'Agi'
+        short: 'Agil'
     }, {
         name: 'Arcane',
-        short: 'Acn'
+        short: 'Arcn'
     }, {
         name: 'Archery',
-        short: 'Ach'
+        short: 'Arch'
     }, {
         name: 'Baking',
-        short: 'Bak'
+        short: 'Bkng'
     }, {
         name: 'Botany',
-        short: 'Bot'
+        short: 'Btny'
     }, {
         name: 'Cooking',
-        short: 'Coo'
+        short: 'Ckng'
     }, {
         name: 'Crafting',
-        short: 'Cra'
+        short: 'Crft'
     }, {
         name: 'Divination',
-        short: 'Div'
+        short: 'Dvnt'
     }, {
         name: 'Exploration',
-        short: 'Exp'
+        short: 'Expl'
     }, {
         name: 'Fighting',
-        short: 'Cbt'
+        short: 'Fght'
     }, {
         name: 'Firemaking',
-        short: 'Fir'
+        short: 'Fire'
     }, {
         name: 'Fishing',
-        short: 'Fis'
+        short: 'Fish'
     }, {
         name: 'Fletching',
-        short: 'Fle'
+        short: 'Fltc'
     }, {
         name: 'Forestry',
-        short: 'Frt'
+        short: 'Frst'
     }, {
         name: 'Forging',
-        short: 'Frg'
+        short: 'Forg'
     }, {
         name: 'Gathering',
-        short: 'Gat'
+        short: 'Gthr'
     }, {
         name: 'Hunting',
-        short: 'Hun'
+        short: 'Hunt'
     }, {
         name: 'Jewelcrafting',
-        short: 'Jwc'
+        short: 'Jwlc'
     }, {
         name: 'Looting',
-        short: 'Loo'
+        short: 'Loot'
     }, {
         name: 'Mining',
-        short: 'Min'
+        short: 'Mnng'
     }, {
         name: 'Prayer',
-        short: 'Pra'
+        short: 'Pryr'
     }, {
         name: 'Runebinding',
-        short: 'Run'
+        short: 'Rnbd'
     }, {
         name: 'Skinning',
-        short: 'Ski'
+        short: 'Skin'
     }, {
         name: 'Slaying',
-        short: 'Sla'
+        short: 'Slay'
     }, {
         name: 'Smelting',
-        short: 'Sme'
+        short: 'Smlt'
     }, {
         name: 'Spellcraft',
-        short: 'Spe'
+        short: 'Spll'
     }, {
         name: 'Summoning',
-        short: 'Sum'
+        short: 'Smmn'
     }, {
         name: 'Thieving',
-        short: 'Thi'
+        short: 'Thvn'
     }, {
         name: 'Transmutation',
-        short: 'Tra'
+        short: 'Tran'
     }, {
         name: 'Woodworking',
-        short: 'Woo'
+        short: 'Wood'
     }, {
         name: 'Not skilling',
-        short: 'Not'
+        short: 'None'
     }
 ];
 var numSkills = skills.length;
